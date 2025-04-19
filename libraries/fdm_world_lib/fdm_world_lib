@@ -1,0 +1,7 @@
+#pragma once
+#ifndef FDM_WORLD_LIB_INCLUDES
+#define FDM_WORLD_LIB_INCLUDES
+
+#include "./includes/constants.hpp"
+
+#endif  // FDM_WORLD_LIB_INCLUDES
