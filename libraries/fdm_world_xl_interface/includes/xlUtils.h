@@ -1,7 +1,7 @@
 #if WIN32
 #pragma once
 
-#include "../Utility/kMatrix.h"
+#include "fdm_world_lib"
 
 namespace kXlUtils {
 LPXLOPER12 getOper(int rows, int cols);

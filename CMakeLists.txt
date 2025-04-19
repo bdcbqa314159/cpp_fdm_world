@@ -30,12 +30,4 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(libraries)
-
-if(WIN32)
-    message(STATUS "Windows detected - xll interfaces")
-    set(excel_sdk_api ${CMAKE_SOURCE_DIR}/libraries/excel_sdk_api)
-endif()
-
-
-
 add_subdirectory(apps)

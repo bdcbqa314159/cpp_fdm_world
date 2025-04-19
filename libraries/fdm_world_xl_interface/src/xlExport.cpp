@@ -1,12 +1,17 @@
 #ifdef WIN32
 #include <windows.h>
 
-#include "../Utility/kBachelier.h"
-#include "../Utility/kMatrixAlgebra.h"
-#include "../Utility/xlUtils.h"
-#include "framework.h"
-#include "xlOper.h"
-#include "xlcall.h"
+//#include "../Utility/kBachelier.h"
+//#include "../Utility/kMatrixAlgebra.h"
+//#include "../Utility/xlUtils.h"
+//#include "framework.h"
+//#include "xlOper.h"
+//#include "xlcall.h"
+
+#include <excel_sdk_api>
+#include "fdm_world_lib"
+
+#include "xlUtils.h"
 
 //	Wrappers
 
@@ -18,11 +23,11 @@ extern "C" __declspec(dllexport) LPXLOPER12 xMatrixMul(LPXLOPER12 A_in,
                                                        LPXLOPER12 B_in) {
   FreeAllTempMemory();
 
-  kMatrix<double> A;
+  mMatrix<double> A;
   if (!kXlUtils::getMatrix(A_in, A))
     return TempStr12("input 1 is not a matrix");
 
-  kMatrix<double> B;
+  mMatrix<double> B;
   if (!kXlUtils::getMatrix(B_in, B))
     return TempStr12("input 2 is not a vector");
 
@@ -30,8 +35,8 @@ extern "C" __declspec(dllexport) LPXLOPER12 xMatrixMul(LPXLOPER12 A_in,
     return TempStr12(
         "input 2 must have number of rows same as input 1 number of cols");
 
-  kMatrix<double> res;
-  kMatrixAlgebra::mmult(A, B, res);
+  mMatrix<double> res;
+  mMatrixAlgebra::mmult(A, B, res);
 
   LPXLOPER12 out = TempXLOPER12();
   kXlUtils::setMatrix(res, out);
@@ -67,7 +72,7 @@ xBachelierCall(LPXLOPER12 expiry_, LPXLOPER12 strike_, LPXLOPER12 forward_,
     return kXlUtils::setError(err);
 
   //	calc
-  double call = kBachelier::call(expiry, strike, forward, volatility);
+  double call = Bachelier::call(expiry, strike, forward, volatility);
 
   //	set output
   LPXLOPER12 out = kXlUtils::getOper(1, 1);
@@ -106,7 +111,7 @@ xBachelierImplied(LPXLOPER12 expiry_, LPXLOPER12 strike_, LPXLOPER12 price_,
     return kXlUtils::setError(err);
 
   //	calc
-  double volatility = kBachelier::implied(expiry, strike, price, forward);
+  double volatility = Bachelier::implied(expiry, strike, price, forward);
 
   //	set output
   LPXLOPER12 out = kXlUtils::getOper(1, 1);
