@@ -5,5 +5,7 @@
 #include "./includes/constants.hpp"
 #include "./includes/inlines.hpp"
 #include "./includes/specialFunctions.hpp"
+#include "./includes/mVector.hpp"
+#include "./includes/mMatrix.hpp"
 
 #endif  // FDM_WORLD_LIB_INCLUDES
