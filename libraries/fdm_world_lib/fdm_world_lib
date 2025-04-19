@@ -3,5 +3,7 @@
 #define FDM_WORLD_LIB_INCLUDES
 
 #include "./includes/constants.hpp"
+#include "./includes/inlines.hpp"
+#include "./includes/specialFunctions.hpp"
 
 #endif  // FDM_WORLD_LIB_INCLUDES
