@@ -14,61 +14,64 @@ using std::max;
 using std::min;
 using std::set;
 // using std::span;
-
 using std::vector;
 
 template <typename T>
-class MatrixView;
+class mMatrixView;
 template <typename T>
-class VectorView;
+class mVectorView;
 
 template <typename T = double>
-class Vector {
+class mVector {
  public:
   using Container = vector<T>;
 
   //	declarations
   using value_type = T;
 
-  Vector() = default;
-  explicit Vector(size_t size) : myData(size) {}
-  Vector(size_t size, T t0) : myData(size, t0) {}
-  Vector(const Vector& rhs) = default;
-  Vector(Vector&& rhs) noexcept = default;
-  ~Vector() noexcept = default;
+  //	trivi c'tors
+  mVector() = default;
+  explicit mVector(size_t size) : myData(size) {}
+  mVector(size_t size, T t0) : myData(size, t0) {}
+  mVector(const mVector& rhs) = default;
+  mVector(mVector&& rhs) noexcept = default;
+  ~mVector() noexcept = default;
 
-  Vector& operator=(const Vector& rhs) = default;
-  Vector& operator=(Vector&&) noexcept = default;
+  //	trivi assign
+  mVector& operator=(const mVector& rhs) = default;
+  mVector& operator=(mVector&&) noexcept = default;
 
-  Vector& operator=(const T& t) {
-    for (size_t i = 0; i < myData.size(); ++i) myData[i] = t;
+  //	assign from single value
+  mVector& operator=(const T& t) {
+    const int s = (int)myData.size();
+    for (int i = 0; i < s; ++i) myData[i] = t;
     return *this;
   }
 
   //	element access
-  const T& operator[](size_t i) const {
+  const T& operator[](int i) const {
 #ifdef _DEBUG
     if (i < 0 || i >= size()) {
-      throw std::runtime_error("Vector subscript out of range");
+      throw std::runtime_error("mVector subscript out of range");
     }
 #endif
     return myData[i];
   }
 
-  T& operator[](size_t i) {
+  T& operator[](int i) {
 #ifdef _DEBUG
     if (i < 0 || i >= size()) {
-      throw std::runtime_error("Vector subscript out of range");
+      throw std::runtime_error("mVector subscript out of range");
     }
 #endif
     return myData[i];
   }
 
-  const T& operator()(size_t i) const { return operator[](i); }
-  T& operator()(size_t i) { return operator[](i); }
+  const T& operator()(int i) const { return operator[](i); }
+  T& operator()(int i) { return operator[](i); }
 
   //	funcs
-  size_t size() const { return myData.size(); }
+  int size() const { return (int)myData.size(); }
   bool empty() const { return myData.empty(); }
   void reserve(size_t s) { myData.reserve(s); }
   void resize(size_t s) { myData.resize(s); }
@@ -82,110 +85,113 @@ class Vector {
   Container& data() { return myData; }
 
   //	to view
-  explicit operator VectorView<T>() { return VectorView<T>(*this); }
-  explicit operator const VectorView<T>() const { return VectorView<T>(*this); }
-
-  const VectorView<T> operator()() const { return VectorView<T>(*this); }
-  VectorView<T> operator()() { return VectorView<T>(*this); }
-  const VectorView<T> operator()(size_t i, size_t size) const {
-    return VectorView<T>(&(*this)(i), size);
-  }
-  VectorView<T> operator()(int i, int size) {
-    return VectorView<T>(&(*this)(i), size);
+  explicit operator mVectorView<T>() { return mVectorView<T>(*this); }
+  explicit operator const mVectorView<T>() const {
+    return mVectorView<T>(*this);
   }
 
-  const MatrixView<T> asRowMatrix() const {
-    return MatrixView<T>(const_cast<Vector<T>*>(this)->myData, 1, size());
+  const mVectorView<T> operator()() const { return mVectorView<T>(*this); }
+  mVectorView<T> operator()() { return mVectorView<T>(*this); }
+  const mVectorView<T> operator()(int i, int size) const {
+    return mVectorView<T>(&(*this)(i), size);
   }
-  const MatrixView<T> asColMatrix() const {
-    return MatrixView<T>(const_cast<Vector<T>*>(this)->myData, size(), 1);
+  mVectorView<T> operator()(int i, int size) {
+    return mVectorView<T>(&(*this)(i), size);
   }
-  MatrixView<T> asRowMatrix() { return MatrixView<T>(data(), 1, size()); }
-  MatrixView<T> asColMatrix() { return MatrixView<T>(data(), size(), 1); }
+
+  const mMatrixView<T> asRowMatrix() const {
+    return mMatrixView<T>(const_cast<mVector<T>*>(this)->myData, 1, size());
+  }
+  const mMatrixView<T> asColMatrix() const {
+    return mMatrixView<T>(const_cast<mVector<T>*>(this)->myData, size(), 1);
+  }
+  mMatrixView<T> asRowMatrix() { return mMatrixView<T>(data(), 1, size()); }
+  mMatrixView<T> asColMatrix() { return mMatrixView<T>(data(), size(), 1); }
 
  private:
   Container myData;
 };
 
 template <typename T>
-class MatrixView;
+class mMatrixView;
 
 template <typename T>
-class VectorView {
+class mVectorView {
  public:
   //	declarations
   using view = span<T>;
   using value_type = T;
 
   //	trivi c'tors
-  VectorView() noexcept = default;
-  VectorView(const VectorView&) noexcept = default;
-  VectorView(VectorView&&) noexcept = default;
-  ~VectorView() noexcept = default;
+  mVectorView() noexcept = default;
+  mVectorView(const mVectorView&) noexcept = default;
+  mVectorView(mVectorView&&) noexcept = default;
+  ~mVectorView() noexcept = default;
 
   //	c'tors will make a view on the rhs (i.e. updating values will update the
   // rhs)
-  VectorView(Vector<T>& rhs) : myView(rhs.data()) {}
-  VectorView(const Vector<T>& rhs)
-      : myView(const_cast<Vector<T>&>(rhs).data()) {}
-  VectorView(vector<T>& rhs) : myView(rhs) {}
-  VectorView(const vector<T>& rhs) : myView(const_cast<vector<T>&>(rhs)) {}
-  VectorView(T& rhs) : myView(&rhs, 1) {}
-  VectorView(const T& rhs) : myView(&const_cast<T&>(rhs), 1) {}
-  explicit VectorView(view& rhs) : myView(rhs) {}
-  VectorView(T* t, size_t count) : myView(t, count) {}
-  VectorView(const T* t, size_t count) : myView(const_cast<T*>(t), count) {}
+  mVectorView(mVector<T>& rhs) : myView(rhs.data()) {}
+  mVectorView(const mVector<T>& rhs)
+      : myView(const_cast<mVector<T>&>(rhs).data()) {}
+  mVectorView(vector<T>& rhs) : myView(rhs) {}
+  mVectorView(const vector<T>& rhs) : myView(const_cast<vector<T>&>(rhs)) {}
+  mVectorView(T& rhs) : myView(&rhs, 1) {}
+  mVectorView(const T& rhs) : myView(&const_cast<T&>(rhs), 1) {}
+  explicit mVectorView(view& rhs) : myView(rhs) {}
+  mVectorView(T* t, size_t count) : myView(t, count) {}
+  mVectorView(const T* t, size_t count) : myView(const_cast<T*>(t), count) {}
 
   //	trivi assign
-  VectorView& operator=(const VectorView&) noexcept = default;
-  VectorView& operator=(VectorView&&) noexcept = default;
+  mVectorView& operator=(const mVectorView&) noexcept = default;
+  mVectorView& operator=(mVectorView&&) noexcept = default;
 
   //	assign from single value
-  VectorView& operator=(const T& t) {
-    for (size_t i = 0; i < myView.size(); ++i) myView[i] = t;
+  mVectorView& operator=(const T& t) {
+    const int s = (int)myView.size();
+    for (int i = 0; i < s; ++i) myView[i] = t;
     return *this;
   }
 
   //	to matrix view
-  const MatrixView<T> asRowMatrix() const {
-    return MatrixView<T>(const_cast<VectorView<T>*>(this)->myView, 1, size());
+  const mMatrixView<T> asRowMatrix() const {
+    return mMatrixView<T>(const_cast<mVectorView<T>*>(this)->myView, 1, size());
   }
-  const MatrixView<T> asColMatrix() const {
-    return MatrixView<T>(const_cast<VectorView<T>*>(this)->myView, size(), 1);
+  const mMatrixView<T> asColMatrix() const {
+    return mMatrixView<T>(const_cast<mVectorView<T>*>(this)->myView, size(), 1);
   }
-  MatrixView<T> asRowMatrix() { return MatrixView<T>(data(), 1, size()); }
-  MatrixView<T> asColMatrix() { return MatrixView<T>(data(), size(), 1); }
+  mMatrixView<T> asRowMatrix() { return mMatrixView<T>(data(), 1, size()); }
+  mMatrixView<T> asColMatrix() { return mMatrixView<T>(data(), size(), 1); }
 
   //	to view
-  const VectorView<T> operator()(size_t i, size_t size) const {
-    return VectorView<T>(&(*this)(i), size);
+  const mVectorView<T> operator()(int i, int size) const {
+    return mVectorView<T>(&(*this)(i), size);
   }
-  VectorView<T> operator()(size_t i, size_t size) {
-    return VectorView<T>(&(*this)(i), size);
+  mVectorView<T> operator()(int i, int size) {
+    return mVectorView<T>(&(*this)(i), size);
   }
 
   //	element access
-  const T& operator[](size_t i) const {
+  const T& operator[](int i) const {
 #ifdef _DEBUG
     if (i < 0 || i >= size())
-      throw std::runtime_error("VectorView subscript out of range");
+      throw std::runtime_error("mVectorView subscript out of range");
 #endif
     return myView[i];
   }
 
-  T& operator[](size_t i) {
+  T& operator[](int i) {
 #ifdef _DEBUG
     if (i < 0 || i >= size())
-      throw std::runtime_error("VectorView subscript out of range");
+      throw std::runtime_error("mVectorView subscript out of range");
 #endif
     return myView[i];
   }
 
-  const T& operator()(size_t i) const { return operator[](i); }
-  T& operator()(size_t i) { return operator[](i); }
+  const T& operator()(int i) const { return operator[](i); }
+  T& operator()(int i) { return operator[](i); }
 
   //	funcs
-  size_t size() const { return myView.size(); }
+  int size() const { return (int)myView.size(); }
   bool empty() const { return size() == 0; }
 
   const view& data() const { return myView; }
