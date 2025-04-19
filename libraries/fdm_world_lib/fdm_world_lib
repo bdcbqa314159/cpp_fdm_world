@@ -7,5 +7,7 @@
 #include "./includes/specialFunctions.hpp"
 #include "./includes/mVector.hpp"
 #include "./includes/mMatrix.hpp"
+#include "./includes/mMatrixAlgebra.hpp"
+#include "./includes/Bachelier.hpp"
 
 #endif  // FDM_WORLD_LIB_INCLUDES
