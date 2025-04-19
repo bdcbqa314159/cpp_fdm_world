@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <set>
 #include <span>
-#include <stdexcept>
+#include <stdexcept>  // IWYU pragma: keep
 #include <vector>
 
 using std::conditional;
@@ -13,7 +13,7 @@ using std::enable_if_t;
 using std::max;
 using std::min;
 using std::set;
-// using std::span;
+using std::span;
 using std::vector;
 
 template <typename T>

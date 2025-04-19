@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "inlines.hpp"
+#include "inlines.hpp"  // IWYU pragma: keep
 #include "specialFunctions.hpp"
 
 using std::max;
@@ -35,7 +35,7 @@ V Bachelier::call(V expiry, V strike, V forward, V volatility) {
   V std = volatility * sqrt(expiry);
   V x = (forward - strike) / std;
   V pdf, res;
-  res = (forward - strike) * kSpecialFunction::normalCdf(x, pdf);
+  res = (forward - strike) * SpecialFunctions::normalCdf(x, pdf);
   res += std * pdf;
 
   //	done
@@ -49,7 +49,7 @@ V Bachelier::vega(V expiry, V strike, V forward, V volatility) {
 
   V st = sqrt(expiry);
   V x = (forward - strike) / (volatility * st);
-  V res = st * kSpecialFunction::normalPdf(x);
+  V res = st * SpecialFunctions::normalPdf(x);
 
   //	done
   return res;
