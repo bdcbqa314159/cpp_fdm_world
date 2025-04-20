@@ -4,6 +4,7 @@ set(common_includes_dir ${CMAKE_CURRENT_SOURCE_DIR}/common/)
 
 add_subdirectory(fdm_world_lib)
 set(fdm_world_lib_dir ${CMAKE_CURRENT_SOURCE_DIR}/fdm_world_lib)
+set(common_dir ${CMAKE_CURRENT_SOURCE_DIR}/common)
 
 if(WIN32)
     message(STATUS "Windows detected - xll interfaces")

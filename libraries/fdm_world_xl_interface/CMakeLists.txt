@@ -1,6 +1,13 @@
 project(fdm_world_xl_interface)
 
-set(includes includes/ ${fdm_world_lib_dir}/ ${fdm_world_lib_dir}/includes ${excel_sdk_api_dir}/ ${excel_sdk_api_dir}/includes)
+set(includes includes/ 
+            ${fdm_world_lib_dir}/ 
+            ${fdm_world_lib_dir}/includes 
+            ${excel_sdk_api_dir}/ 
+            ${excel_sdk_api_dir}/includes
+            ${common_dir}/
+)
+
 set(sources src/xlExport.cpp)
 
 add_compile_definitions(${PROJECT_NAME}_EXPORTS

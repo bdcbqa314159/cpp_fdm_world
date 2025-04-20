@@ -13,7 +13,7 @@
 #endif
 
 #ifdef WIN32
-// static const std::string LIBRARY_NAME = toupdate
+static const std::string LIBRARY_NAME = "to_update";
 #endif
 
 #endif  // DL_LOADER_LIBRARY_NAMES_HPP

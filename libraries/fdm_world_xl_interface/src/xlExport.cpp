@@ -1,177 +1,181 @@
 #ifdef WIN32
 #include <windows.h>
 
-//#include "../Utility/kBachelier.h"
-//#include "../Utility/kMatrixAlgebra.h"
-//#include "../Utility/xlUtils.h"
-//#include "framework.h"
-//#include "xlOper.h"
-//#include "xlcall.h"
-
 #include "excel_sdk_api"
 #include "fdm_world_lib"
 
+#include "code_cpp.hpp"
+#include "exported.hpp"
 #include "xlUtils.h"
 
 //	Wrappers
 
-extern "C" __declspec(dllexport) double xMultiply2Numbers(double x, double y) {
-  return x * y;
-}
+EXPORT_C{
 
-extern "C" __declspec(dllexport) LPXLOPER12 xMatrixMul(LPXLOPER12 A_in,
-                                                       LPXLOPER12 B_in) {
-  FreeAllTempMemory();
+    EXPORTED double xMultiply2Numbers(double x, double y) { return x * y; }
 
-  mMatrix<double> A;
-  if (!kXlUtils::getMatrix(A_in, A))
-    return TempStr12("input 1 is not a matrix");
+    EXPORTED LPXLOPER12 xMatrixMul(LPXLOPER12 A_in, LPXLOPER12 B_in) {
+          FreeAllTempMemory();
 
-  mMatrix<double> B;
-  if (!kXlUtils::getMatrix(B_in, B))
-    return TempStr12("input 2 is not a vector");
+          mMatrix<double> A;
+          if (!kXlUtils::getMatrix(A_in, A))
+            return TempStr12("input 1 is not a matrix");
 
-  if (B.rows() != A.cols())
-    return TempStr12(
-        "input 2 must have number of rows same as input 1 number of cols");
+          mMatrix<double> B;
+          if (!kXlUtils::getMatrix(B_in, B))
+            return TempStr12("input 2 is not a vector");
 
-  mMatrix<double> res;
-  mMatrixAlgebra::mmult(A, B, res);
+          if (B.rows() != A.cols())
+            return TempStr12(
+                "input 2 must have number of rows same as input 1 number of cols");
 
-  LPXLOPER12 out = TempXLOPER12();
-  kXlUtils::setMatrix(res, out);
-  return out;
-}
+          mMatrix<double> res;
+          mMatrixAlgebra::mmult(A, B, res);
 
-extern "C" __declspec(dllexport) LPXLOPER12
-xBachelierCall(LPXLOPER12 expiry_, LPXLOPER12 strike_, LPXLOPER12 forward_,
-               LPXLOPER12 volatility_) {
-  FreeAllTempMemory();
+          LPXLOPER12 out = TempXLOPER12();
+          kXlUtils::setMatrix(res, out);
+          return out;
+        }
 
-  //	helps
-  string err;
+    EXPORTED LPXLOPER12 xBachelierCall(
+            LPXLOPER12 expiry_, LPXLOPER12 strike_, LPXLOPER12 forward_,
+            LPXLOPER12 volatility_) {
+          FreeAllTempMemory();
 
-  //	get expiry
-  double expiry;
-  if (!kXlUtils::getDbl(expiry_, 0, 0, expiry, &err))
-    return kXlUtils::setError(err);
+          //	helps
+          string err;
 
-  //	get strike
-  double strike;
-  if (!kXlUtils::getDbl(strike_, 0, 0, strike, &err))
-    return kXlUtils::setError(err);
+          //	get expiry
+          double expiry;
+          if (!kXlUtils::getDbl(expiry_, 0, 0, expiry, &err))
+            return kXlUtils::setError(err);
 
-  //	get forwad
-  double forward;
-  if (!kXlUtils::getDbl(forward_, 0, 0, forward, &err))
-    return kXlUtils::setError(err);
+          //	get strike
+          double strike;
+          if (!kXlUtils::getDbl(strike_, 0, 0, strike, &err))
+            return kXlUtils::setError(err);
 
-  //	get volatility
-  double volatility;
-  if (!kXlUtils::getDbl(volatility_, 0, 0, volatility, &err))
-    return kXlUtils::setError(err);
+          //	get forwad
+          double forward;
+          if (!kXlUtils::getDbl(forward_, 0, 0, forward, &err))
+            return kXlUtils::setError(err);
 
-  //	calc
-  double call = Bachelier::call(expiry, strike, forward, volatility);
+          //	get volatility
+          double volatility;
+          if (!kXlUtils::getDbl(volatility_, 0, 0, volatility, &err))
+            return kXlUtils::setError(err);
 
-  //	set output
-  LPXLOPER12 out = kXlUtils::getOper(1, 1);
-  kXlUtils::setDbl(0, 0, call, out);
+          //	calc
+          double call = Bachelier::call(expiry, strike, forward, volatility);
 
-  //	done
-  return out;
-}
+          //	set output
+          LPXLOPER12 out = kXlUtils::getOper(1, 1);
+          kXlUtils::setDbl(0, 0, call, out);
 
-extern "C" __declspec(dllexport) LPXLOPER12
-xBachelierImplied(LPXLOPER12 expiry_, LPXLOPER12 strike_, LPXLOPER12 price_,
-                  LPXLOPER12 forward_) {
-  FreeAllTempMemory();
+          //	done
+          return out;
+        }
 
-  //	helps
-  string err;
 
-  //	get expiry
-  double expiry;
-  if (!kXlUtils::getDbl(expiry_, 0, 0, expiry, &err))
-    return kXlUtils::setError(err);
+    EXPORTED LPXLOPER12 xBachelierImplied(
+            LPXLOPER12 expiry_, LPXLOPER12 strike_, LPXLOPER12 price_,
+            LPXLOPER12 forward_) {
+          FreeAllTempMemory();
 
-  //	get strike
-  double strike;
-  if (!kXlUtils::getDbl(strike_, 0, 0, strike, &err))
-    return kXlUtils::setError(err);
+          //	helps
+          string err;
 
-  //	get volatility
-  double price;
-  if (!kXlUtils::getDbl(price_, 0, 0, price, &err))
-    return kXlUtils::setError(err);
+          //	get expiry
+          double expiry;
+          if (!kXlUtils::getDbl(expiry_, 0, 0, expiry, &err))
+            return kXlUtils::setError(err);
 
-  //	get forward
-  double forward;
-  if (!kXlUtils::getDbl(forward_, 0, 0, forward, &err))
-    return kXlUtils::setError(err);
+          //	get strike
+          double strike;
+          if (!kXlUtils::getDbl(strike_, 0, 0, strike, &err))
+            return kXlUtils::setError(err);
 
-  //	calc
-  double volatility = Bachelier::implied(expiry, strike, price, forward);
+          //	get volatility
+          double price;
+          if (!kXlUtils::getDbl(price_, 0, 0, price, &err))
+            return kXlUtils::setError(err);
 
-  //	set output
-  LPXLOPER12 out = kXlUtils::getOper(1, 1);
-  kXlUtils::setDbl(0, 0, volatility, out);
+          //	get forward
+          double forward;
+          if (!kXlUtils::getDbl(forward_, 0, 0, forward, &err))
+            return kXlUtils::setError(err);
 
-  //	done
-  return out;
-}
+          //	calc
+          double volatility =
+              Bachelier::implied(expiry, strike, price, forward);
 
-//	Registers
+          //	set output
+          LPXLOPER12 out = kXlUtils::getOper(1, 1);
+          kXlUtils::setDbl(0, 0, volatility, out);
 
-extern "C" __declspec(dllexport) int xlAutoOpen(void) {
-  XLOPER12 xDLL;
+          //	done
+          return out;
+        }
 
-  Excel12f(xlGetName, &xDLL, 0);
+    //	Registers
 
-  Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
-           (LPXLOPER12)TempStr12(L"xMultiply2Numbers"),
-           (LPXLOPER12)TempStr12(L"BBB"),
-           (LPXLOPER12)TempStr12(L"xMultiply2Numbers"),
-           (LPXLOPER12)TempStr12(L"x, y"), (LPXLOPER12)TempStr12(L"1"),
-           (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
-           (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
-           (LPXLOPER12)TempStr12(L"Multiplies 2 numbers"),
-           (LPXLOPER12)TempStr12(L""));
+    EXPORTED int xlAutoOpen(void) {
+          XLOPER12 xDLL;
 
-  Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
-           (LPXLOPER12)TempStr12(L"xMatrixMul"), (LPXLOPER12)TempStr12(L"QQQ"),
-           (LPXLOPER12)TempStr12(L"xMatrixMul"), (LPXLOPER12)TempStr12(L"A, B"),
-           (LPXLOPER12)TempStr12(L"1"),
-           (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
-           (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
-           (LPXLOPER12)TempStr12(L"Multiplying 2 matrices."),
-           (LPXLOPER12)TempStr12(L""));
+          Excel12f(xlGetName, &xDLL, 0);
 
-  Excel12f(
-      xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
-      (LPXLOPER12)TempStr12(L"xBachelierCall"), (LPXLOPER12)TempStr12(L"QQQQQ"),
-      (LPXLOPER12)TempStr12(L"xBachelierCall"),
-      (LPXLOPER12)TempStr12(L"expiry, strike, forward, volatility"),
-      (LPXLOPER12)TempStr12(L"1"), (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
-      (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
-      (LPXLOPER12)TempStr12(L"Price option in Bachelier model"),
-      (LPXLOPER12)TempStr12(L""));
+          Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
+                   (LPXLOPER12)TempStr12(L"xMultiply2Numbers"),
+                   (LPXLOPER12)TempStr12(L"BBB"),
+                   (LPXLOPER12)TempStr12(L"xMultiply2Numbers"),
+                   (LPXLOPER12)TempStr12(L"x, y"), (LPXLOPER12)TempStr12(L"1"),
+                   (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
+                   (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
+                   (LPXLOPER12)TempStr12(L"Multiplies 2 numbers"),
+                   (LPXLOPER12)TempStr12(L""));
 
-  Excel12f(
-      xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
-      (LPXLOPER12)TempStr12(L"xBachelierImplied"),
-      (LPXLOPER12)TempStr12(L"QQQQQ"),
-      (LPXLOPER12)TempStr12(L"xBachelierImplied"),
-      (LPXLOPER12)TempStr12(L"expiry, strike, price, forward"),
-      (LPXLOPER12)TempStr12(L"1"), (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
-      (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
-      (LPXLOPER12)TempStr12(L"Compute implied volatility in Bachelier model"),
-      (LPXLOPER12)TempStr12(L""));
+          Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
+                   (LPXLOPER12)TempStr12(L"xMatrixMul"),
+                   (LPXLOPER12)TempStr12(L"QQQ"),
+                   (LPXLOPER12)TempStr12(L"xMatrixMul"),
+                   (LPXLOPER12)TempStr12(L"A, B"), (LPXLOPER12)TempStr12(L"1"),
+                   (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
+                   (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
+                   (LPXLOPER12)TempStr12(L"Multiplying 2 matrices."),
+                   (LPXLOPER12)TempStr12(L""));
 
-  /* Free the XLL filename */
-  Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDLL);
+          Excel12f(
+              xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
+              (LPXLOPER12)TempStr12(L"xBachelierCall"),
+              (LPXLOPER12)TempStr12(L"QQQQQ"),
+              (LPXLOPER12)TempStr12(L"xBachelierCall"),
+              (LPXLOPER12)TempStr12(L"expiry, strike, forward, volatility"),
+              (LPXLOPER12)TempStr12(L"1"),
+              (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
+              (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
+              (LPXLOPER12)TempStr12(L"Price option in Bachelier model"),
+              (LPXLOPER12)TempStr12(L""));
 
-  return 1;
+          Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
+                   (LPXLOPER12)TempStr12(L"xBachelierImplied"),
+                   (LPXLOPER12)TempStr12(L"QQQQQ"),
+                   (LPXLOPER12)TempStr12(L"xBachelierImplied"),
+                   (LPXLOPER12)TempStr12(L"expiry, strike, price, forward"),
+                   (LPXLOPER12)TempStr12(L"1"),
+                   (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
+                   (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
+                   (LPXLOPER12)TempStr12(
+                       L"Compute implied volatility in Bachelier model"),
+                   (LPXLOPER12)TempStr12(L""));
+
+          /* Free the XLL filename */
+          Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDLL);
+
+          return 1;
+        }
+
+
+
 }
 
 #endif  // WIN32
