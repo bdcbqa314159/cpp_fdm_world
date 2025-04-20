@@ -2,6 +2,7 @@
 #pragma once
 
 #include "fdm_world_lib"
+#include "excel_sdk_api"
 
 namespace kXlUtils {
 LPXLOPER12 getOper(int rows, int cols);
@@ -17,11 +18,11 @@ void setStr(int row, int col, const string& str, LPXLOPER12 out);
 
 LPXLOPER12 setError(const string& error);
 
-bool getVector(LPXLOPER12 in, kVector<double>& out);
-bool getMatrix(LPXLOPER12 in, kMatrix<double>& out);
+bool getVector(LPXLOPER12 in, mVector<double>& out);
+bool getMatrix(LPXLOPER12 in, mMatrix<double>& out);
 
-void setVector(const kVector<double>& in, LPXLOPER12 out);
-void setMatrix(const kMatrix<double>& in, LPXLOPER12 out);
+void setVector(const mVector<double>& in, LPXLOPER12 out);
+void setMatrix(const mMatrix<double>& in, LPXLOPER12 out);
 }  // namespace kXlUtils
 
 LPXLOPER12
@@ -104,7 +105,7 @@ kXlUtils::setError(const string& error) {
   return out;
 }
 
-bool kXlUtils::getVector(LPXLOPER12 in, kVector<double>& out) {
+bool kXlUtils::getVector(LPXLOPER12 in, mVector<double>& out) {
   size_t m = getRows(in);
 
   out.resize(m);
@@ -117,7 +118,7 @@ bool kXlUtils::getVector(LPXLOPER12 in, kVector<double>& out) {
   return true;
 }
 
-bool kXlUtils::getMatrix(LPXLOPER12 in, kMatrix<double>& out) {
+bool kXlUtils::getMatrix(LPXLOPER12 in, mMatrix<double>& out) {
   size_t m = getRows(in);
   size_t n = getCols(in);
   out.resize(m, n);
@@ -132,13 +133,13 @@ bool kXlUtils::getMatrix(LPXLOPER12 in, kMatrix<double>& out) {
   return true;
 }
 
-void kXlUtils::setVector(const kVector<double>& in, LPXLOPER12 out) {
+void kXlUtils::setVector(const mVector<double>& in, LPXLOPER12 out) {
   size_t m = in.size();
   resize(out, m, 1);
   for (size_t i = 0; i < m; ++i) setNum(out, in((int)i), i, 0);
 }
 
-void kXlUtils::setMatrix(const kMatrix<double>& in, LPXLOPER12 out) {
+void kXlUtils::setMatrix(const mMatrix<double>& in, LPXLOPER12 out) {
   size_t m = in.rows();
   size_t n = in.cols();
   resize(out, m, n);

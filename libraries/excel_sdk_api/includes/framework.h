@@ -24,6 +24,8 @@
 // Function prototypes
 //
 
+#include "xlcall.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -32,20 +34,20 @@ void far cdecl debugPrintf(LPSTR lpFormat, ...);
 LPSTR GetTempMemory(size_t cBytes);  // Savine
 void FreeAllTempMemory(void);        // Savine
 // int cdecl Excel(int xlfn, LPXLOPER pxResult, int count, ...);
-LPXLOPER TempNum(double d);
-LPXLOPER TempStr(LPSTR lpstr);
-LPXLOPER TempBool(int b);
-LPXLOPER TempInt(short int i);
+// LPXLOPER TempNum(double d);
+// LPXLOPER TempStr(LPSTR lpstr);
+// LPXLOPER TempBool(int b);
+// LPXLOPER TempInt(short int i);
 // LPXLOPER TempActiveRef(WORD rwFirst,WORD rwLast,BYTE colFirst,BYTE colLast);
 // LPXLOPER TempActiveCell(WORD rw, BYTE col);
 // LPXLOPER TempActiveRow(WORD rw);
 // LPXLOPER TempActiveColumn(BYTE col);
-LPXLOPER TempErr(WORD i);
-LPXLOPER TempMissing(void);
-void InitFramework(void);
-void QuitFramework(void);
+//LPXLOPER TempErr(WORD i);
+//LPXLOPER TempMissing(void);
+//void InitFramework(void);
+//void QuitFramework(void);
 
-LPXLOPER TempStrConst(const LPSTR lpstr);
+//LPXLOPER TempStrConst(const LPSTR lpstr);
 LPXLOPER12 TempNum12(double d);            // Savine
 LPXLOPER12 TempStr12(const XCHAR* lpstr);  // Savine
 LPXLOPER12 TempBool12(BOOL b);

@@ -8,7 +8,7 @@
 //#include "xlOper.h"
 //#include "xlcall.h"
 
-#include <excel_sdk_api>
+#include "excel_sdk_api"
 #include "fdm_world_lib"
 
 #include "xlUtils.h"
