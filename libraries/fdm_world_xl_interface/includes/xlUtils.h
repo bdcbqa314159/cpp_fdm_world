@@ -1,8 +1,8 @@
 #if WIN32
 #pragma once
 
-#include "fdm_world_lib"
 #include "excel_sdk_api"
+#include "fdm_world_lib"
 
 namespace kXlUtils {
 LPXLOPER12 getOper(int rows, int cols);
