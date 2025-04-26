@@ -3,6 +3,7 @@
 #define FDM_WORLD_LIB_INCLUDES
 
 #include "./includes/Bachelier.hpp"         // IWYU pragma: keep
+#include "./includes/Black.hpp"				// IWYU pragma: keep
 #include "./includes/constants.hpp"         // IWYU pragma: keep
 #include "./includes/inlines.hpp"           // IWYU pragma: keep
 #include "./includes/mMatrix.hpp"           // IWYU pragma: keep
