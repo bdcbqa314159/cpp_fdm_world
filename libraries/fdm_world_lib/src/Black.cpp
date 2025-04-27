@@ -60,3 +60,19 @@ double Black::implied(double expiry, double strike, double price,
   //	done
   return volatility;
 }
+
+
+//	fd runner
+bool Black::fdRunner(const double s0, const double r, const double mu,
+                      const double sigma, const double expiry,
+                      const double strike, const bool dig,
+                      const int pc,      //	put (-1) call (1)
+                      const int ea,      //	european (0), american (1)
+                      const int smooth,  //	smoothing
+                      const double theta, const int wind, const double numStd,
+                      const int numT, const int numS, const bool update,
+                      const int numPr, double& res0, mVector<double>& s,
+                      mVector<double>& res, string& error) {
+  //	done
+  return true;
+}

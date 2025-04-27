@@ -29,7 +29,7 @@ void mmult(const mMatrix<U>& a, const mMatrix<V>& b, mMatrix<W>& ab) {
 }
 
 template <class V>
-void tridag(const mMatrixView<V>& A, const mVectorView<V>& r, mVector<V>& u,
+void tridag(const mMatrixView<V>& A, const mVectorView<V>& r, mVectorView<V>& u,
             mVectorView<V>& gam) {
   V bet = A(0, 1);
   int n = A.rows();
@@ -51,18 +51,23 @@ void tridag(const mMatrixView<V>& A, const mVectorView<V>& r, mVector<V>& u,
 
 template <class V>
 void tridag(const mMatrix<V>& A, const mVector<V>& r, mVector<V>& u,
-            mVectorView<V>& gam) {
+            mVector<V>& gam) {
   int n = A.rows();
   if (u.size() < n) u.resize(n);
   if (gam.size() < n) gam.resize(n);
 
-  tridag(A(), r(), u(), gam());
+  auto A_ = A();
+  auto r_ = r();
+  auto u_ = u();
+  auto gam_ = gam();
+
+  tridag(A(), r(), u_, gam_);
   return;
 }
 
 template <class V>
 void banmul(const mMatrixView<V>& A, int m1, int m2, const mVectorView<V>& b,
-            mVector<V>& x) {
+            mVectorView<V>& x) {
   int n = A.rows() - 1;
   V xi;
   for (int i = 0; i <= n; ++i) {
@@ -86,7 +91,9 @@ void banmul(const mMatrix<V>& A, int m1, int m2, const mVector<V>& b,
             mVector<V>& x) {
   int n = A.rows() - 1;
   x.resize(n + 1);
-  banmul(A(), m1, m2, b(), x());
+  auto b_ = b();
+  auto x_ = x();
+  banmul(A(), m1, m2, b_, x_);
   return;
 }
 
@@ -102,6 +109,82 @@ void transpose(const int mm, mMatrix<V>& A) {
       Inlines::swap(A(i, k), A(j, l));
     }
   }
+}
+
+//	transposing a ban matrix
+template <class V>
+void transpose(const mMatrix<V>& A, const int m1, const int m2,
+               mMatrix<V>& At) {
+  //	resize
+  At.resize(A.rows(), A.cols());
+
+  //	loop
+  int n = A.rows() - 1;
+  int i, j, k, l, jl, ju;
+  for (i = 0; i <= n; ++i) {
+    jl = max(0, i - m1);
+    ju = min(i + m2, n);
+    for (j = jl; j <= ju; ++j) {
+      k = j - i + m1;
+      l = i - j + m2;
+      At(j, l) = A(i, k);
+    }
+  }
+
+  //	done
+  return;
+}
+
+//	solve: A u = r where A is left diag
+template <class V>
+void leftdag(const mMatrix<V>& A,  //	nx2
+             const mVector<V>& r, mVector<V>& u) {
+  //	resize
+  u.resize(A.rows());
+
+  //	tjek
+  if (!A.rows()) return;
+
+  //	dims
+  int n = A.rows() - 1;
+
+  //	helps
+  int i;
+
+  //	loop
+  u(0) = r(0) / A(0, 1);
+  for (i = 1; i <= n; ++i) {
+    u(i) = (r(i) - A(i, 0) * u(i - 1)) / A(i, 1);
+  }
+
+  //	done
+  return;
+}
+
+//	solve: A u = r where A is right diag
+template <class V>
+void rightdag(const mMatrix<V>& A,  //	nx2
+              const mVector<V>& r, mVector<V>& u) {
+  //	resize
+  u.resize(A.rows());
+
+  //	tjek
+  if (!A.rows()) return;
+
+  //	dims
+  int n = A.rows() - 1;
+
+  //	helps
+  int i;
+
+  //	loop
+  u(n) = r(n) / A(n, 0);
+  for (i = n - 1; i >= 0; --i) {
+    u(i) = (r(i) - A(i, 1) * u(i + 1)) / A(i, 0);
+  }
+
+  //	done
+  return;
 }
 
 }  // namespace mMatrixAlgebra

@@ -7,6 +7,7 @@
 
 #include "inlines.hpp"  // IWYU pragma: keep
 #include "specialFunctions.hpp"
+#include "mVector.hpp"
 
 using std::max;
 
@@ -25,6 +26,18 @@ class Black {
   //	implied
   static double implied(double expiry, double strike, double price,
                         double forward);
+
+  //	fd runner
+  static bool fdRunner(const double s0, const double r, const double mu,
+                       const double sigma, const double expiry,
+                       const double strike, const bool dig,
+                       const int pc,      //	put (-1) call (1)
+                       const int ea,      //	european (0), american (1)
+                       const int smooth,  //	smoothing
+                       const double theta, const int wind, const double numStd,
+                       const int numt, const int numx, const bool update,
+                       const int numPr, double& res0, mVector<double>& s,
+                       mVector<double>& res, std::string& error);
 };
 
 //	call

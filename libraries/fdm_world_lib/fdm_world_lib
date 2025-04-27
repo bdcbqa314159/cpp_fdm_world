@@ -10,5 +10,8 @@
 #include "./includes/mMatrixAlgebra.hpp"    // IWYU pragma: keep
 #include "./includes/mVector.hpp"           // IWYU pragma: keep
 #include "./includes/specialFunctions.hpp"  // IWYU pragma: keep
+#include "./includes/Fd1d.hpp"				// IWYU pragma: keep
+#include "./includes/mFiniteDifference.hpp"	// IWYU pragma: keep
+#include "./includes/Ade.hpp"	            // IWYU pragma: keep
 
 #endif  // FDM_WORLD_LIB_INCLUDES

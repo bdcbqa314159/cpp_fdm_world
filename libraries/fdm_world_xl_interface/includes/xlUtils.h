@@ -28,7 +28,7 @@ void setMatrix(const mMatrix<double>& in, LPXLOPER12 out);
 LPXLOPER12
 kXlUtils::getOper(int rows, int cols) {
   LPXLOPER12 out = TempXLOPER12();
-  resize(out, 1, 1);
+  resize(out, rows, cols);
   return out;
 }
 
@@ -88,6 +88,7 @@ void kXlUtils::setDbl(int row, int col, double num, LPXLOPER12 out) {
 }
 
 void kXlUtils::setStr(int row, int col, const string& str, LPXLOPER12 out) {
+
   if (!checkDim(out, row, col, nullptr)) return;
   setString(out, str, row, col);
 
