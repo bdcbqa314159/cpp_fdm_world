@@ -34,12 +34,12 @@ V Black::call(V expiry, V strike, V forward, V volatility) {
 
   V std = volatility * sqrt(expiry);
 
-  V d1 = log(forward / strike) / std + std;
-  V d2 = log(forward / strike) / std - std;
+  V d1 = log(forward / strike) / std + 0.5*std;
+  V d2 = log(forward / strike) / std - 0.5*std;
 
   V temp1,temp2;
-  V D1 = SpecialFunctions::normalPdf(d1, temp1);
-  V D2 = SpecialFunctions::normalPdf(d2, temp2);
+  V D1 = SpecialFunctions::normalCdf(d1, temp1);
+  V D2 = SpecialFunctions::normalCdf(d2, temp2);
 
   return forward * D1 - strike * D2;
 }
