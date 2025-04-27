@@ -189,6 +189,52 @@ EXPORT_C {
     return out;
   }
 
+  EXPORTED LPXLOPER12 xTridag(LPXLOPER12 A_in, LPXLOPER12 b_in) {
+    FreeAllTempMemory();
+
+    kMatrix<double> A;
+    if (!kXlUtils::getMatrix(A_in, A))
+      return TempStr12("input 1 is not a matrix");
+
+    kVector<double> b;
+    if (!kXlUtils::getVector(b_in, b))
+      return TempStr12("input 2 is not a vector");
+
+    if (b.size() != A.rows())
+      return TempStr12("input 1 must have same number of rows as input 2");
+
+    kVector<double> gam, res;
+    kMatrixAlgebra::tridag(A, b, res, gam);
+
+    LPXLOPER12 out = TempXLOPER12();
+    kXlUtils::setVector(res, out);
+    return out;
+  }
+
+  EXPORTED LPXLOPER12 xBanmul(LPXLOPER12 A_in, LPXLOPER12 x_in, double m1_in,
+                              double m2_in) {
+    FreeAllTempMemory();
+
+    kMatrix<double> A;
+    if (!kXlUtils::getMatrix(A_in, A))
+      return TempStr12("input 1 is not a matrix");
+
+    kVector<double> x;
+    if (!kXlUtils::getVector(x_in, x))
+      return TempStr12("input 2 is not a vector");
+
+    if (x.size() != A.rows())
+      return TempStr12("input 1 must have same number of rows as input 2");
+
+    kVector<double> res;
+    int m1 = (int)(m1_in + 0.5), m2 = (int)(m2_in + 0.5);
+    kMatrixAlgebra::banmul(A, m1, m2, x, res);
+
+    LPXLOPER12 out = TempXLOPER12();
+    kXlUtils::setVector(res, out);
+    return out;
+  }
+
   //	Registers
 
   EXPORTED int xlAutoOpen(void) {
@@ -261,6 +307,25 @@ EXPORT_C {
         (LPXLOPER12)TempStr12(L""),
         (LPXLOPER12)TempStr12(L"Compute implied volatility in Black model"),
         (LPXLOPER12)TempStr12(L""));
+
+    Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
+             (LPXLOPER12)TempStr12(L"xTridag"), (LPXLOPER12)TempStr12(L"QQQ"),
+             (LPXLOPER12)TempStr12(L"xTridag"), (LPXLOPER12)TempStr12(L"A, b"),
+             (LPXLOPER12)TempStr12(L"1"),
+             (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
+             (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
+             (LPXLOPER12)TempStr12(L"Solving tri-diagonal system."),
+             (LPXLOPER12)TempStr12(L""));
+
+    Excel12f(xlfRegister, 0, 11, (LPXLOPER12)&xDLL,
+             (LPXLOPER12)TempStr12(L"xBanmul"), (LPXLOPER12)TempStr12(L"QQQBB"),
+             (LPXLOPER12)TempStr12(L"xBanmul"),
+             (LPXLOPER12)TempStr12(L"A, x, m1, m2"),
+             (LPXLOPER12)TempStr12(L"1"),
+             (LPXLOPER12)TempStr12(L"myOwnCppFunctions"),
+             (LPXLOPER12)TempStr12(L""), (LPXLOPER12)TempStr12(L""),
+             (LPXLOPER12)TempStr12(L"Multiplying band-matrix with vector."),
+             (LPXLOPER12)TempStr12(L""));
 
     /* Free the XLL filename */
     Excel12f(xlFree, 0, 1, (LPXLOPER12)&xDLL);
